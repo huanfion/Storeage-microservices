@@ -1,0 +1,9 @@
+server:
+  port: 8881
+spring:
+  cloud:
+    config:
+      uri: http://192.168.50.49:8888
+      name: servicehi
+      label: master
+      profile: prod

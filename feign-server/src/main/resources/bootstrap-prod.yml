@@ -1,7 +1,7 @@
 spring:
   cloud:
     config:
-      uri: http://192.168.50.45:8888
-      name: feignserver
+      uri: http://192.168.50.49:8888
+      name: feign-consumer
       label: master
       profile: prod

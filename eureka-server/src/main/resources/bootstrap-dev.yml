@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: config-eureka-server #定义要读取的资源文件的名称
+      label: master
+      profile: dev

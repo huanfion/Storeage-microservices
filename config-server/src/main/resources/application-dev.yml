@@ -16,21 +16,16 @@ spring:
       ignored-interfaces:
         - docker0
         - veth.*
-#  zipkin:
-#    base-url: http://localhost:9411
-#  boot:
-#    admin:
-#      client:
-#        url: http://localhost:8889
+  zipkin:
+    base-url: http://localhost:9411
+  boot:
+    admin:
+      client:
+        url: http://localhost:8889
 server:
   port: 8888
-host: 192.168.50.45
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${host}:8080/eureka/
+      defaultZone: http://localhost:8080/eureka/
 
-  instance:
-    ip-address: 192.168.50.45
-    prefer-ip-address: true
-    instance-id : ${spring.application.name}:${eureka.instance.ip-address}:${server.port}

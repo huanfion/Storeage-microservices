@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      uri: http://192.168.50.49:8888
+      name: adminserver
+      label: master
+      profile: prod
