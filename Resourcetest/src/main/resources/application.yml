@@ -1,0 +1,9 @@
+security:
+  oauth2:
+    client:
+      client-id: clientid
+      client-secret: secret
+      access-token-uri: http://localhost:7006/oauth/token
+      user-authorization-uri: http://localhost:7006/oauth/authorize
+    resource:
+      token-info-uri: http://localhost:7006/oauth/check_token

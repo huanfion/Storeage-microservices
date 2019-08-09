@@ -37,5 +37,9 @@ public class HelloController {
         userList.add(new User("王五",19,"xiaowu","123456"));
         return  userList;
     }
+    @GetMapping("/Code")
+    public String GetCode(@RequestParam String Code){
+        return  Code;
+    }
 }
 
