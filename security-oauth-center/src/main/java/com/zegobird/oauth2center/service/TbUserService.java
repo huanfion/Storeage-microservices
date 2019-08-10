@@ -2,6 +2,8 @@ package com.zegobird.oauth2center.service;
 
 import com.zegobird.oauth2center.domain.TbUser;
 
+import java.util.List;
+
 /**
  * @version 1.0
  * @author huanfion
@@ -10,4 +12,5 @@ import com.zegobird.oauth2center.domain.TbUser;
 public interface TbUserService{
 
         TbUser getByUsername(String username);
+        List<TbUser> getUserList();
 }

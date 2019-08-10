@@ -7,6 +7,8 @@ import com.zegobird.oauth2center.mapper.TbUserMapper;
 import com.zegobird.oauth2center.service.TbUserService;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
+
 /**
  * @version 1.0
  * @author huanfion
@@ -23,5 +25,10 @@ public class TbUserServiceImpl implements TbUserService{
         example.createCriteria().andEqualTo("username",username);
         return tbUserMapper.selectOneByExample(example);
 
+    }
+
+    @Override
+    public List<TbUser> getUserList() {
+        return tbUserMapper.selectAll();
     }
 }
