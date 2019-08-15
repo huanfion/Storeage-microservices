@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -26,7 +26,7 @@
 			<form class="form" id="entry_form"  action="/authentication/form" method="post">
 				<input type="text" placeholder="用户名" id="username" name="username" value="admin">
 				<input type="password" placeholder="密码" name="password" id="password">
-				<button type="submit" id="entry_btn">登录</button>
+				<button type="button" id="entry_btn">登录</button>
 				<div id="prompt" class="prompt"></div>
 			</form>
 		</div>
@@ -41,24 +41,24 @@
 		$("#entry_name").focus();
 		$(document).keydown(function(event){
 			if(event.keyCode==13){
-				$("#entry_form").submit();
+				$("#entry_btn").click();
 			}
 		});
-		// $("#entry_btn").on("click",function () {
-		// 	$.ajax({
-		// 		url:"/authentication/form",
-		// 		type:"POST",
-		// 		data:{username:$("#username").val(),password:$("#password").val()},
-		// 		xhrFields:{
-		// 			withCredentials : true},
-		// 		crossDomain: true,
-		// 		beforeSend:function(request){
-		// 			request.setRequestHeader(header,token)
-		// 		},
-		// 		success:function (data) {
-		// 			console.log("login")
-		// 		}});
-		// });
+		$("#entry_btn").on("click",function () {
+			$.ajax({
+				url:"/authentication/form",
+				type:"POST",
+				data:{username:$("#username").val(),password:$("#password").val()},
+				xhrFields:{
+					withCredentials : true},
+				crossDomain: true,
+				beforeSend:function(request){
+					request.setRequestHeader(header,token)
+				},
+				success:function (data) {
+					console.log("login")
+				}});
+		});
 	})
 
 </script>

@@ -1,0 +1,219 @@
+drop table if exists tb_permission;
+drop table if exists tb_role;
+drop table if exists tb_role_permission;
+drop table if exists tb_user;
+drop table if exists tb_user_role;
+drop table if exists tb_group;
+drop table if exists tb_group_role;
+drop table if exists tb_user_permission;
+drop table if exists tb_group_permission;
+drop table if exists tb_organization;
+
+-- 用户表
+CREATE TABLE tb_user (
+  id serial8 NOT NULL ,
+	organizationid BIGINT NOT NULL,
+	loginname varchar(50) NOT NULL,
+  username varchar(50) NOT NULL ,
+  password varchar(64) NOT NULL ,
+  phone varchar(20) DEFAULT NULL,
+  email varchar(50) DEFAULT NULL,
+  created TIMESTAMP ,
+	lastlogined TIMESTAMP,
+  updated TIMESTAMP,
+	count BIGINT NOT NULL,
+  PRIMARY KEY (id)
+) ;
+comment on COLUMN tb_user.organizationid is '所属组织id';
+comment on COLUMN tb_user.loginname is '登录账号';
+comment on COLUMN tb_user.username is '用户名';
+comment on COLUMN tb_user.password is '密码，加密存储';
+comment on COLUMN tb_user.phone is '注册手机号';
+comment on COLUMN tb_user.email is '注册邮箱';
+comment on COLUMN tb_user.count is '登录次数';
+comment on TABLE tb_user is '用户表';
+-- select setval('tb_user_id_seq',38,false);
+insert  into tb_user(organizationid,loginname,username,password,phone,email,created,updated,count) values
+(1,'admin','admin','$2a$10$9ZhDOBp.sRKat4l14ygu/.LscxrMUcDAfeVOEPiYwbcRkoB09gCmi','15888888888','lee.lusifer@gmail.com',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,0);
+
+
+select * from tb_user;
+
+--角色表
+CREATE TABLE tb_role (
+  id serial8 NOT NULL ,
+  parent_id bigint DEFAULT NULL ,
+  name varchar(64) NOT NULL ,
+  enname varchar(64) NOT NULL ,
+  description varchar(200) DEFAULT NULL ,
+  created TIMESTAMP NOT NULL,
+  updated TIMESTAMP NOT NULL,
+  PRIMARY KEY (id)
+) ;
+comment on COLUMN tb_role.parent_id is '父角色';
+comment on COLUMN tb_role.name is '角色名称';
+comment on COLUMN tb_role.enname is '角色英文名称';
+comment on COLUMN tb_role.description is '备注';
+comment on TABLE tb_role is '角色表';
+-- select setval('tb_role_id_seq',38,false);
+insert  into tb_role(parent_id,name,enname,description,created,updated) values
+(0,'超级管理员','admin',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+
+--drop table tb_permission
+--权限表
+CREATE TABLE tb_permission (
+  id serial8 NOT NULL,
+  parent_id bigint DEFAULT NULL ,
+  name varchar(64) NOT NULL ,
+  enname varchar(64) NOT NULL ,
+  url varchar(255) NOT NULL ,
+  description varchar(200),
+  created TIMESTAMP NOT NULL,
+  updated TIMESTAMP ,
+  PRIMARY KEY (id)
+);
+comment on COLUMN tb_permission.parent_id is '父权限';
+comment on COLUMN tb_permission.name is '权限名称';
+comment on COLUMN tb_permission.enname is '权限英文名称';
+comment on COLUMN tb_permission.url is '授权路径';
+comment on COLUMN tb_permission.description is '备注';
+comment on TABLE tb_permission is '权限表';
+-- select setval('tb_permission_id_seq',43,false);
+
+insert  into tb_permission(parent_id,name,enname,url,description,created,updated) values
+(0,'系统管理','System','/',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(1,'用户管理','SystemUser','/users/',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(2,'查看用户','SystemUserView','',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(2,'新增用户','SystemUserInsert','',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(2,'编辑用户','SystemUserUpdate','',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(2,'删除用户','SystemUserDelete','',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(1,'内容管理','SystemContent','/contents/',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(7,'查看内容','SystemContentView','/contents/view/**',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(7,'新增内容','SystemContentInsert','/contents/insert/**',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(7,'编辑内容','SystemContentUpdate','/contents/update/**',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(7,'删除内容','SystemContentDelete','/contents/delete/**',NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+
+select * from tb_permission;
+
+--用户组表
+create table tb_group(
+id serial8 not null,
+groupname varchar(64) not null,
+parent_id bigint not null,
+created TIMESTAMP not null,
+updated TIMESTAMP,
+PRIMARY KEY (id)
+);
+comment on COLUMN tb_group.parent_id is '父组';
+comment on COLUMN tb_group.groupname is '组名';
+comment on table tb_group is '用户组表';
+
+
+
+--角色权限表
+CREATE TABLE tb_role_permission (
+  id serial8 NOT NULL ,
+  role_id bigint NOT NULL ,
+  permission_id bigint NOT NULL ,
+  PRIMARY KEY (id)
+) ;
+comment on COLUMN tb_role_permission.role_id is '角色 ID';
+comment on COLUMN tb_role_permission.permission_id is '权限 ID';
+comment on TABLE tb_role_permission is '角色权限表';
+-- select setval('tb_role_permission_id_seq',43,false);
+insert  into tb_role_permission(role_id,permission_id) values
+(1,1),
+(1,2),
+(1,3),
+(1,4),
+(1,5),
+(1,6),
+(1,7),
+(1,8),
+(1,9),
+(1,10),
+(1,11);
+
+
+--组权限表
+create table tb_group_permission(
+id serial8 not null,
+group_id bigint not null,
+permission_id bigint not null,
+created TIMESTAMP not null,
+PRIMARY KEY (id)
+);
+comment on COLUMN tb_group_permission.group_id is '用户组id';
+comment on column tb_group_permission.permission_id is '权限id';
+comment on table tb_group_permission is '组权限表';
+
+select * from tb_group_permission;
+
+--组角色表
+create table tb_group_role(
+id serial8 not null,
+group_id bigint not null,
+role_id bigint not null,
+PRIMARY KEY (id,role_id)
+);
+comment on COLUMN tb_group_role.group_id is '用户组id';
+comment on column tb_group_role.role_id is '角色id';
+comment on table tb_group_role is '组角色表';
+select * from tb_group_role;
+
+--用户权限表
+create table tb_user_permission(
+id serial8 not null,
+user_id bigint not null,
+permission_id bigint not null,
+creaetd TIMESTAMP not null,
+PRIMARY KEY (id)
+);
+
+comment on COLUMN tb_user_permission.user_id is '用户id';
+comment on column tb_user_permission.permission_id is '权限id';
+comment on table tb_user_permission is '用户权限表';
+select * from tb_user_permission;
+
+--用户角色表
+CREATE TABLE tb_user_role (
+  id serial8 NOT NULL ,
+  user_id bigint NOT NULL,
+  role_id bigint NOT NULL,
+	created TIMESTAMP not NULL,
+  PRIMARY KEY (id)
+);
+comment on COLUMN tb_user_role.user_id is '用户 ID';
+comment on COLUMN tb_user_role.role_id is '角色 ID';
+comment on TABLE tb_user_role is '用户角色表';
+-- select setval('tb_user_role_id_seq',38,false);
+insert  into tb_user_role(user_id,role_id,created) values
+(1,1,CURRENT_TIMESTAMP);
+select * from tb_user_role;
+
+--组织表
+create table tb_organization(
+id serial8 not null,
+parent_id bigint not null,
+organization_name VARCHAR(64) not null,
+created TIMESTAMP not null,
+updated TIMESTAMP ,
+description VARCHAR(200),
+PRIMARY KEY(id)
+);
+comment on COLUMN tb_organization.parent_id is '父组织id';
+comment on COLUMN tb_organization.organization_name is '组织名称';
+comment on COLUMN tb_organization.description is '组织描述';
+comment on table tb_organization is '组织表';
+
+
+
+  SELECT P.*
+        FROM
+            tb_user AS u
+            LEFT JOIN tb_user_role AS ur ON u."id" = ur.user_id
+            LEFT JOIN tb_role AS r ON r."id" = ur.role_id
+            LEFT JOIN tb_role_permission AS rp ON r."id" = rp.role_id
+            LEFT JOIN tb_permission AS P ON P.ID = rp.permission_id
+        WHERE
+            u.ID = 1

@@ -1,0 +1,183 @@
+-- used in tests that use HSQL
+create table oauth_client_details (
+  client_id VARCHAR(256) PRIMARY KEY,
+  resource_ids VARCHAR(256),
+  client_secret VARCHAR(256),
+  scope VARCHAR(256),
+  authorized_grant_types VARCHAR(256),
+  web_server_redirect_uri VARCHAR(256),
+  authorities VARCHAR(256),
+  access_token_validity INTEGER,
+  refresh_token_validity INTEGER,
+  additional_information VARCHAR(4096),
+  autoapprove VARCHAR(256)
+);
+
+create table oauth_client_token (
+  token_id VARCHAR(256),
+  token BYTEA,
+  authentication_id VARCHAR(256) PRIMARY KEY,
+  user_name VARCHAR(256),
+  client_id VARCHAR(256)
+);
+
+create table oauth_access_token (
+  token_id VARCHAR(256),
+  token BYTEA,
+  authentication_id VARCHAR(256) PRIMARY KEY,
+  user_name VARCHAR(256),
+  client_id VARCHAR(256),
+  authentication BYTEA,
+  refresh_token VARCHAR(256)
+);
+
+create table oauth_refresh_token (
+  token_id VARCHAR(256),
+  token BYTEA,
+  authentication BYTEA
+);
+
+create table oauth_code (
+  code VARCHAR(256), authentication BYTEA
+);
+
+create table oauth_approvals (
+	userId VARCHAR(256),
+	clientId VARCHAR(256),
+	scope VARCHAR(256),
+	status VARCHAR(10),
+	expiresAt TIMESTAMP,
+	lastModifiedAt TIMESTAMP
+);
+
+
+-- customized oauth_client_details table
+create table ClientDetails (
+  appId VARCHAR(256) PRIMARY KEY,
+  resourceIds VARCHAR(256),
+  appSecret VARCHAR(256),
+  scope VARCHAR(256),
+  grantTypes VARCHAR(256),
+  redirectUrl VARCHAR(256),
+  authorities VARCHAR(256),
+  access_token_validity INTEGER,
+  refresh_token_validity INTEGER,
+  additionalInformation VARCHAR(4096),
+  autoApproveScopes VARCHAR(256)
+);
+
+
+CREATE TABLE tb_permission (
+  id serial8 NOT NULL,
+  parent_id bigint DEFAULT NULL ,
+  name varchar(64) NOT NULL ,
+  enname varchar(64) NOT NULL ,
+  url varchar(255) NOT NULL ,
+  description varchar(200),
+  created TIMESTAMP NOT NULL,
+  updated TIMESTAMP NOT NULL,
+  PRIMARY KEY (id)
+);
+comment on COLUMN tb_permission.parent_id is '父权限';
+comment on COLUMN tb_permission.name is '权限名称';
+comment on COLUMN tb_permission.enname is '权限英文名称';
+comment on COLUMN tb_permission.url is '授权路径';
+comment on COLUMN tb_permission.description is '备注';
+comment on TABLE tb_permission is '权限表';
+select setval('tb_permission_id_seq',43,false);
+
+insert  into tb_permission(id,parent_id,name,enname,url,description,created,updated) values
+(37,0,'系统管理','System','/',NULL,'2019-04-04 23:22:54','2019-04-04 23:22:56'),
+(38,37,'用户管理','SystemUser','/users/',NULL,'2019-04-04 23:25:31','2019-04-04 23:25:33'),
+(39,38,'查看用户','SystemUserView','',NULL,'2019-04-04 15:30:30','2019-04-04 15:30:43'),
+(40,38,'新增用户','SystemUserInsert','',NULL,'2019-04-04 15:30:31','2019-04-04 15:30:44'),
+(41,38,'编辑用户','SystemUserUpdate','',NULL,'2019-04-04 15:30:32','2019-04-04 15:30:45'),
+(42,38,'删除用户','SystemUserDelete','',NULL,'2019-04-04 15:30:48','2019-04-04 15:30:45'),
+(44,37,'内容管理','SystemContent','/contents/',NULL,'2019-04-06 18:23:58','2019-04-06 18:24:00'),
+(45,44,'查看内容','SystemContentView','/contents/view/**',NULL,'2019-04-06 23:49:39','2019-04-06 23:49:41'),
+(46,44,'新增内容','SystemContentInsert','/contents/insert/**',NULL,'2019-04-06 23:51:00','2019-04-06 23:51:02'),
+(47,44,'编辑内容','SystemContentUpdate','/contents/update/**',NULL,'2019-04-06 23:51:04','2019-04-06 23:51:06'),
+(48,44,'删除内容','SystemContentDelete','/contents/delete/**',NULL,'2019-04-06 23:51:08','2019-04-06 23:51:10');
+
+CREATE TABLE tb_role (
+  id serial8 NOT NULL ,
+  parent_id bigint DEFAULT NULL ,
+  name varchar(64) NOT NULL ,
+  enname varchar(64) NOT NULL ,
+  description varchar(200) DEFAULT NULL ,
+  created TIMESTAMP NOT NULL,
+  updated TIMESTAMP NOT NULL,
+  PRIMARY KEY (id)
+) ;
+comment on COLUMN tb_role.parent_id is '父角色';
+comment on COLUMN tb_role.name is '角色名称';
+comment on COLUMN tb_role.enname is '角色英文名称';
+comment on COLUMN tb_role.description is '备注';
+comment on TABLE tb_role is '角色表';
+select setval('tb_role_id_seq',38,false);
+insert  into tb_role(id,parent_id,name,enname,description,created,updated) values
+(37,0,'超级管理员','admin',NULL,'2019-04-04 23:22:03','2019-04-04 23:22:05');
+
+CREATE TABLE tb_role_permission (
+  id serial8 NOT NULL ,
+  role_id bigint NOT NULL ,
+  permission_id bigint NOT NULL ,
+  PRIMARY KEY (id)
+) ;
+comment on COLUMN tb_role_permission.role_id is '角色 ID';
+comment on COLUMN tb_role_permission.permission_id is '权限 ID';
+comment on TABLE tb_role_permission is '角色权限表';
+select setval('tb_role_permission_id_seq',43,false);
+insert  into tb_role_permission(id,role_id,permission_id) values
+(37,37,37),
+(38,37,38),
+(39,37,39),
+(40,37,40),
+(41,37,41),
+(42,37,42),
+(43,37,44),
+(44,37,45),
+(45,37,46),
+(46,37,47),
+(47,37,48);
+
+CREATE TABLE tb_user (
+  id serial8 NOT NULL ,
+  username varchar(50) NOT NULL ,
+  password varchar(64) NOT NULL ,
+  phone varchar(20) DEFAULT NULL,
+  email varchar(50) DEFAULT NULL,
+  created TIMESTAMP NOT NULL,
+  updated TIMESTAMP NOT NULL,
+  PRIMARY KEY (id)
+) ;
+comment on COLUMN tb_user.username is '用户名';
+comment on COLUMN tb_user.password is '密码，加密存储';
+comment on COLUMN tb_user.phone is '注册手机号';
+comment on COLUMN tb_user.email is '注册邮箱';
+comment on TABLE tb_user is '用户表';
+select setval('tb_user_id_seq',38,false);
+insert  into tb_user(id,username,password,phone,email,created,updated) values
+(37,'admin','$2a$10$9ZhDOBp.sRKat4l14ygu/.LscxrMUcDAfeVOEPiYwbcRkoB09gCmi','15888888888','lee.lusifer@gmail.com','2019-04-04 23:21:27','2019-04-04 23:21:29');
+
+
+CREATE TABLE tb_user_role (
+  id serial8 NOT NULL ,
+  user_id bigint NOT NULL,
+  role_id bigint NOT NULL,
+  PRIMARY KEY (id)
+);
+comment on COLUMN tb_user_role.user_id is '用户 ID';
+comment on COLUMN tb_user_role.role_id is '角色 ID';
+comment on TABLE tb_user_role is '用户角色表';
+select setval('tb_user_role_id_seq',38,false);
+insert  into tb_user_role(id,user_id,role_id) values
+(37,37,37);
+
+
+
+drop table tb_permission;
+drop table tb_role;
+drop table tb_role_permission;
+drop table tb_user;
+drop table tb_user_role;

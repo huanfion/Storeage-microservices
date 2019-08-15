@@ -1,3 +1,4 @@
+#spring security oauth2配置
 security:
   oauth2:
     client:

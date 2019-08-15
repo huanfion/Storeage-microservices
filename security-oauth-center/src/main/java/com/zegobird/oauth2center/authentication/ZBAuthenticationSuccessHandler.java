@@ -2,7 +2,7 @@ package com.zegobird.oauth2center.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zegobird.oauth2center.properties.LoginType;
-import com.zegobird.oauth2center.properties.SecurityPorperties;
+import com.zegobird.oauth2center.properties.SecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class ZBAuthenticationSuccessHandler extends SavedRequestAwareAuthenticat
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
-    private SecurityPorperties securityPorperties;
+    private SecurityProperties securityProperties;
     @Autowired
     private ObjectMapper objectMapper;
     //private static final  String DEFAULT_CSRF_TOKEN_ATTR_NAME= HttpSessionCsrfTokenRepository.class.getName().concat(".CSRF_TOKEN");
@@ -39,7 +39,7 @@ public class ZBAuthenticationSuccessHandler extends SavedRequestAwareAuthenticat
         logger.info("登录成功");
         SavedRequest savedRequest = this.requestCache.getRequest(request, response);
 
-        if(LoginType.JSON.equals(securityPorperties.getBrowser().getLoginType())){
+        if(LoginType.JSON.equals(securityProperties.getBrowser().getLoginType())){
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(authentication));
         }
@@ -47,22 +47,8 @@ public class ZBAuthenticationSuccessHandler extends SavedRequestAwareAuthenticat
             super.onAuthenticationSuccess(request,response,authentication);
         }
 
-//        String targetUrl = "/user";
-//        this.logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
-//        this.getRedirectStrategy().sendRedirect(request, response, targetUrl);
-//        if (savedRequest == null) {
-//            super.onAuthenticationSuccess(request, response, authentication);
-//        } else {
-//            String targetUrlParameter = this.getTargetUrlParameter();
-//            if (!this.isAlwaysUseDefaultTargetUrl() && (targetUrlParameter == null || !StringUtils.hasText(request.getParameter(targetUrlParameter)))) {
-//                this.clearAuthenticationAttributes(request);
-//                String targetUrl = "/user";
-//                this.logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
-//                this.getRedirectStrategy().sendRedirect(request, response, targetUrl);
-//            } else {
-//                this.requestCache.removeRequest(request, response);
-//                super.onAuthenticationSuccess(request, response, authentication);
-//            }
-//        }
+//        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+//        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//        response.setHeader("Access-Control-Allow-Credentials", "true");
     }
 }

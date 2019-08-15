@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,5 +45,21 @@ public class UserController {
     @GetMapping("/index")
     public String index(){
         return  "index";
+    }
+
+
+    @GetMapping("/error")
+    public String error(){
+        return  "failure";
+    }
+
+    @GetMapping("/success")
+    public String success(){
+        return  "success";
+    }
+
+    @GetMapping("/demo")
+    public String demo() {
+        return "demo";
     }
 }

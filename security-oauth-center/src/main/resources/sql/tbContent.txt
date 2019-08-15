@@ -1,0 +1,64 @@
+CREATE TABLE tb_content (
+  id serial8 NOT NULL ,
+  category_id bigint NOT NULL ,
+  title varchar(200) DEFAULT NULL ,
+  sub_title varchar(100) DEFAULT NULL ,
+  title_desc varchar(500) DEFAULT NULL ,
+  url varchar(500) DEFAULT NULL ,
+  pic varchar(300) DEFAULT NULL ,
+  pic2 varchar(300) DEFAULT NULL,
+  content text ,
+  created TIMESTAMP DEFAULT NULL,
+  updated TIMESTAMP DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+comment on COLUMN tb_content.category_id is '内容类目ID';
+comment on COLUMN tb_content.title is '内容标题';
+comment on COLUMN tb_content.sub_title is '子标题';
+comment on COLUMN tb_content.title_desc is '标题描述';
+comment on COLUMN tb_content.url is '链接';
+comment on COLUMN tb_content.pic is '图片绝对路径';
+comment on COLUMN tb_content.pic2 is '图片2';
+comment on COLUMN tb_content.url is '内容';
+comment on TABLE tb_content is '内容表';
+select setval('tb_content_id_seq',42,false);
+insert  into tb_content(id,category_id,title,sub_title,title_desc,url,pic,pic2,content,created,updated) values
+(28,89,'标题','子标题','标题说明','http://www.jd.com',NULL,NULL,NULL,'2019-04-07 00:56:09','2019-04-07 00:56:11'),
+(29,89,'ad2','ad2','ad2','http://www.baidu.com',NULL,NULL,NULL,'2019-04-07 00:56:13','2019-04-07 00:56:15'),
+(30,89,'ad3','ad3','ad3','http://www.sina.com.cn',NULL,NULL,NULL,'2019-04-07 00:56:17','2019-04-07 00:56:19'),
+(31,89,'ad4','ad4','ad4','http://www.funtl.com',NULL,NULL,NULL,'2019-04-07 00:56:22','2019-04-07 00:56:25');
+
+CREATE TABLE tb_content_category (
+  id serial8 NOT NULL ,
+  parent_id bigint DEFAULT NULL ,
+  name varchar(50) DEFAULT NULL ,
+  status smallint DEFAULT '1' ,
+  sort_order int4 DEFAULT NULL,
+  is_parent smallint DEFAULT '1' ,
+  created TIMESTAMP DEFAULT NULL,
+  updated TIMESTAMP DEFAULT NULL ,
+  PRIMARY KEY (id)
+) ;
+select setval('tb_content_category_id_seq',98,false);
+comment on COLUMN tb_content_category.id is '类目ID';
+comment on COLUMN tb_content_category.parent_id is '父类目ID=0时，代表的是一级的类目';
+comment on COLUMN tb_content_category.status is '状态。可选值:1(正常),2(删除)';
+comment on COLUMN tb_content_category.sort_order is '排列序号，表示同级类目的展现次序，如数值相等则按名称次序排列。取值范围:大于零的整数';
+comment on COLUMN tb_content_category.is_parent is '该类目是否为父类目，1为true，0为false';
+comment on COLUMN tb_content_category.pic is '创建时间';
+comment on COLUMN tb_content_category.pic2 is '更新时间';
+comment on TABLE tb_content_category is '内容分类表';
+insert  into tb_content_category(id,parent_id,name,status,sort_order,is_parent,created,updated) values
+(30,0,'LeeShop',1,1,1,'2015-04-03 16:51:38','2015-04-03 16:51:40'),
+(86,30,'首页',1,1,1,'2015-06-07 15:36:07','2015-06-07 15:36:07'),
+(87,30,'列表页面',1,1,1,'2015-06-07 15:36:16','2015-06-07 15:36:16'),
+(88,30,'详细页面',1,1,1,'2015-06-07 15:36:27','2015-06-07 15:36:27'),
+(89,86,'大广告',1,1,0,'2015-06-07 15:36:38','2015-06-07 15:36:38'),
+(90,86,'小广告',1,1,0,'2015-06-07 15:36:45','2015-06-07 15:36:45'),
+(91,86,'商城快报',1,1,0,'2015-06-07 15:36:55','2015-06-07 15:36:55'),
+(92,87,'边栏广告',1,1,0,'2015-06-07 15:37:07','2015-06-07 15:37:07'),
+(93,87,'页头广告',1,1,0,'2015-06-07 15:37:17','2015-06-07 15:37:17'),
+(94,87,'页脚广告',1,1,0,'2015-06-07 15:37:31','2015-06-07 15:37:31'),
+(95,88,'边栏广告',1,1,0,'2015-06-07 15:37:56','2015-06-07 15:37:56'),
+(96,86,'中广告',1,1,1,'2015-07-25 18:58:52','2015-07-25 18:58:52'),
+(97,96,'中广告1',1,1,0,'2015-07-25 18:59:43','2015-07-25 18:59:43');

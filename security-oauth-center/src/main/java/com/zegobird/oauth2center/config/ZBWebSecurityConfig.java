@@ -1,14 +1,10 @@
 package com.zegobird.oauth2center.config;
 
-import com.zegobird.oauth2center.authentication.ZBAuthenticationFailureHandler;
-import com.zegobird.oauth2center.authentication.ZBAuthenticationSuccessHandler;
-import com.zegobird.oauth2center.properties.SecurityPorperties;
+import com.zegobird.oauth2center.properties.SecurityProperties;
 import com.zegobird.oauth2center.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -38,7 +34,7 @@ public class ZBWebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new UserDetailsServiceImpl();
     }
     @Autowired
-    private SecurityPorperties securityPorperties;
+    private SecurityProperties securityProperties;
 
     @Autowired
     private AuthenticationSuccessHandler zbAuthenticationSuccessHandler;
@@ -60,6 +56,11 @@ public class ZBWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder());
     }
 
+    /**
+     * 需要配置这个支持password模式
+     * @return
+     * @throws Exception
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -67,16 +68,20 @@ public class ZBWebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
         @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
-                .loginPage("/user/login")
+        http
+                .formLogin()
+                .loginPage("/authentication/require")
                 .loginProcessingUrl("/authentication/form")//和自定义页面的post路径一致
+//                .defaultSuccessUrl("/user/success",true)
+//                .failureForwardUrl("/user/error")
                 .successHandler(zbAuthenticationSuccessHandler)
                 .failureHandler(zbAuthenticationFailureHandler)
                 .and()
-                .authorizeRequests()
+                .authorizeRequests()//定义哪些url需要被保护，哪些不需要保护
                 //.withObjectPostProcessor()//自定义处理
-                .antMatchers("/authentication/require","/user/login").permitAll()
+                .antMatchers("/authentication/require",securityProperties.getBrowser().getLoginPage(),"/user/login","/user/success","/user/error").permitAll()
                 .antMatchers("/authentication/form").permitAll()
+                .antMatchers("/oauth/token" , "oauth/check_token").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
 //            http.authorizeRequests().anyRequest().permitAll();

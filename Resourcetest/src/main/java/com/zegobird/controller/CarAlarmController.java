@@ -22,5 +22,7 @@ public class CarAlarmController {
         log.debug("授权信息:{}",authentication);
         return "Add car alarm";
     }
+
+
 }
 

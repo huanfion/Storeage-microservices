@@ -29,8 +29,11 @@ import javax.sql.DataSource;
  * @date 2019/8/8 19:12
  */
 @Configuration
-@EnableAuthorizationServer
+@EnableAuthorizationServer //提供/oauth/authorize,/oauth/token,/oauth/check_token,/oauth/confirm_access,/oauth/error
 public class ZBAuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+    /**
+     * 注入authenticationManager 来支持password grant type
+     */
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -56,15 +59,14 @@ public class ZBAuthorizationServerConfig extends AuthorizationServerConfigurerAd
     public ZBRedisTokenStore redisTokenStore() {
         return new ZBRedisTokenStore(connectionFactory);
     }
-    //为什么自动注入就会报错呢
-//    @Autowired
-//    @Qualifier("userDetaillServiceImpl")
-//   private UserDetailsService userDetailsService;
 
+    @Autowired
+    private CustomWebResponseExceptionTranslator customWebResponseExceptionTranslator;
 
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl();
     }
+
     @Primary
     @Bean
     public DefaultTokenServices defaultTokenServices() {
@@ -79,9 +81,9 @@ public class ZBAuthorizationServerConfig extends AuthorizationServerConfigurerAd
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.tokenKeyAccess("permitAll()");
+        security.tokenKeyAccess("permitAll()");//开启/oauth/token_key 验证端口无权限访问
         security.checkTokenAccess("isAuthenticated()");
-        security.allowFormAuthenticationForClients();
+        security.allowFormAuthenticationForClients();//允许表单登录
     }
 
     @Override
@@ -89,11 +91,18 @@ public class ZBAuthorizationServerConfig extends AuthorizationServerConfigurerAd
         clients.withClientDetails(jdbcClientDetails());
     }
 
+    /**
+     * 用来配置授权（authorizatio）以及令牌（token）的访问端点和令牌服务   核心配置  在启动时就会进行配置
+     * @param endpoints
+     * @throws Exception
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(redisTokenStore())
-              .userDetailsService(userDetailsService())
-              .authenticationManager(authenticationManager);
+                .userDetailsService(userDetailsService())
+                .authenticationManager(authenticationManager);//开启密码授权模式
         endpoints.tokenServices(defaultTokenServices());
+        //自定义登录异常信息 未起作用？？
+        endpoints.exceptionTranslator(customWebResponseExceptionTranslator);
     }
 }

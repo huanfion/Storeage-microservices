@@ -44,5 +44,5 @@ mybatis:
 zegobird:
   security:
     browser:
-      loginPage: /login.html
+      loginPage: /user/login
       loginType: REDIRECT

@@ -2,7 +2,7 @@ package com.zegobird.oauth2center.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zegobird.oauth2center.properties.LoginType;
-import com.zegobird.oauth2center.properties.SecurityPorperties;
+import com.zegobird.oauth2center.properties.SecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +29,11 @@ public class ZBAuthenticationFailureHandler extends SimpleUrlAuthenticationFailu
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private SecurityPorperties securityPorperties;
+    private SecurityProperties securityProperties;
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         logger.info("登录失败");
-        if(LoginType.JSON.equals(securityPorperties.getBrowser().getLoginType())) {
+        if(LoginType.JSON.equals(securityProperties.getBrowser().getLoginType())) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(exception));

@@ -5,6 +5,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author huanfion
@@ -31,7 +34,24 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/add/**")
-                .authenticated();
+                .antMatchers("/add/**").hasAuthority("CarAlarmInsert")
+        .antMatchers("/user").hasAuthority("SystemUser")
+        .antMatchers("/user/add").hasAuthority("SystemUserMyInsert")
+        .antMatchers("/user/current").hasAuthority("SystemUserView");
+        http
+//                .exceptionHandling()
+//                .authenticationEntryPoint(((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
+//                .and()
+                .csrf().disable()
+                //配置跨域
+                .cors().configurationSource(httpServletRequest -> {
+            CorsConfiguration corsConfiguration = new CorsConfiguration();
+            corsConfiguration.addAllowedHeader("*");
+            corsConfiguration.addAllowedOrigin(httpServletRequest.getHeader("Origin"));
+            corsConfiguration.addAllowedMethod("*");
+            corsConfiguration.setAllowCredentials(true);
+            corsConfiguration.setMaxAge(3600L);
+            return corsConfiguration;
+        });
     }
 }

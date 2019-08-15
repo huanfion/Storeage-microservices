@@ -1,0 +1,17 @@
+security:
+  oauth2:
+    sso:
+      login-path: /user/login
+    client:
+      client-id: client1
+      client-secret: secret
+      access-token-uri: http://localhost:7006/oauth/token
+      user-authorization-uri: http://localhost:7006/oauth/authorize
+    resource:
+      token-info-uri: http://localhost:7006/oauth/check_token
+server:
+  servlet:
+    session:
+      cookie:
+        name: OAUTH2SESSION
+  port: 7008

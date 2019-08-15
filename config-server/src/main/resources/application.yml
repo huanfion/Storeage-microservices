@@ -29,3 +29,41 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8080/eureka/
 
+---
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      label: master
+      server:
+        git:
+          uri: https://github.com/huanfion/Spring-Cloud-Config
+          search-paths: respo
+          username:
+          password:
+          skip-ssl-validation: false
+    # 忽略掉一些指定名称的网络接口
+    inetutils:
+      ignored-interfaces:
+        - docker0
+        - veth.*
+  zipkin:
+    base-url: http://192.168.50.49:9411
+  boot:
+    admin:
+      client:
+        url: http://192.168.50.49:8889
+server:
+  port: 8888
+host: 192.168.50.49
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${host}:8080/eureka/,http://${host}:8081/eureka/
+
+  instance:
+    ip-address: 192.168.50.49
+    prefer-ip-address: true
+    instance-id : ${spring.application.name}:${eureka.instance.ip-address}:${server.port}
+
