@@ -21,7 +21,6 @@ import java.util.List;
 public class HelloController {
     @Value("${server.port}")
     String port;
-
     @Value("${foo}")
     String foo;
 

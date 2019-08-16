@@ -22,6 +22,17 @@ spring:
     admin:
       client:
         url: http://192.168.50.49:8889
+# 消息总线配置
+  rabbitmq:
+    host: 192.168.50.49
+    port: 5672
+    username: guest
+    password: guest
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 server:
   port: 8888
 host: 192.168.50.49

@@ -1,9 +1,22 @@
 # 如果修改了默认服务器配置，则客户端就不能在application配置文件中配置spring.cloud.config.uri
 # 必须在bootstrap 中配置。
+
 spring:
+  profiles: node1
   cloud:
     config:
       uri: http://192.168.50.49:8888
-      name: config-eureka-server #定义要读取的资源文件的名称
+      name: eureka-servernode1 #定义要读取的资源文件的名称
+      label: master
+      profile: prod
+
+---
+spring:
+  profiles: node2
+  cloud:
+    config:
+      uri: http://192.168.50.49:8888
+      name: eureka-servernode2 #定义要读取的资源文件的名称
+
       label: master
       profile: prod

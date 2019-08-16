@@ -51,6 +51,12 @@
             <artifactId>spring-boot-admin-starter-client</artifactId>
         </dependency>
         <!-- spring boot admin 客户端 END-->
+        <!-- Spring Cloud Bus 消息总线-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+        </dependency>
+        <!--pring Cloud Bus 消息总线 END-->
     </dependencies>
 
     <dependencyManagement>
