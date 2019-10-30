@@ -188,7 +188,9 @@ public class PostgreSqlGenerator {
                 .setXmlName("%sMapper")
                 .setServiceName("I%sService")
                 .setServiceImplName("%sServiceImpl")
-                .setControllerName("%sController");
+                .setControllerName("%sController")
+                .setBaseResultMap(true)//生成基本的resultMap
+                .setBaseColumnList(true);//生成基本的SQL片段
         return gc;
     }
 

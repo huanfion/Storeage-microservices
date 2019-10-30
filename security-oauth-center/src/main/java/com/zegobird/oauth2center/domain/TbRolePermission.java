@@ -1,8 +1,11 @@
 package com.zegobird.oauth2center.domain;
 
-import java.io.Serializable;
-import javax.persistence.*;
 import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
 
 @Data
 @Table(name = "tb_role_permission")

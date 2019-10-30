@@ -1,18 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zegobird.oauth2center.mapper.TbUserMapper">
+  <!--mybatis二级缓存 redis实现Cache-->
+  <!--<cache type="com.zegobird.oauth2center.redis.MybatisRedisCache">-->
+    <!--<property name="eviction" value="LRU" />-->
+    <!--<property name="flushInterval" value="6000000" />-->
+    <!--<property name="size" value="1024" />-->
+    <!--<property name="readOnly" value="false" />-->
+  <!--</cache>-->
   <resultMap id="BaseResultMap" type="com.zegobird.oauth2center.domain.TbUser">
-    <!--@mbg.generated generated on Thu Aug 08 19:46:13 CST 2019.-->
+    <!--@mbg.generated generated on Fri Aug 23 17:16:00 CST 2019.-->
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="created" jdbcType="TIMESTAMP" property="created" />
+    <result column="lastlogined" jdbcType="TIMESTAMP" property="lastlogined" />
     <result column="updated" jdbcType="TIMESTAMP" property="updated" />
+    <result column="count" jdbcType="BIGINT" property="count" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="isdeleted" jdbcType="SMALLINT" property="isdeleted" />
   </resultMap>
+
+  <resultMap id="ResultMap" type="com.zegobird.oauth2center.dto.UserOutput">
+    <!--@mbg.generated generated on Fri Aug 23 17:16:00 CST 2019.-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="created" jdbcType="TIMESTAMP" property="created" />
+    <result column="lastlogined" jdbcType="TIMESTAMP" property="lastlogined" />
+    <result column="updated" jdbcType="TIMESTAMP" property="updated" />
+    <result column="count" jdbcType="BIGINT" property="count" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="isdeleted" jdbcType="SMALLINT" property="isdeleted" />
+    <collection property="roleList" ofType="com.zegobird.oauth2center.dto.RoleIdName" column="id"
+                select="com.zegobird.oauth2center.mapper.TbUserRoleMapper.queryUserRole">
+    </collection>
+  </resultMap>
+
+  <resultMap id="RoleUserResultMap" type="com.zegobird.oauth2center.dto.RoleUserOutput">
+    <!--@mbg.generated generated on Fri Aug 23 17:16:00 CST 2019.-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="user_role_id" jdbcType="VARCHAR" property="user_role_id" />
+    <result column="created" jdbcType="TIMESTAMP" property="created" />
+    <result column="lastlogined" jdbcType="TIMESTAMP" property="lastlogined" />
+    <result column="updated" jdbcType="TIMESTAMP" property="updated" />
+    <result column="count" jdbcType="BIGINT" property="count" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="isdeleted" jdbcType="SMALLINT" property="isdeleted" />
+    <collection property="roleList" ofType="com.zegobird.oauth2center.dto.RoleIdName" column="id"
+                select="com.zegobird.oauth2center.mapper.TbUserRoleMapper.queryUserRole">
+
+    </collection>
+  </resultMap>
+
   <sql id="Base_Column_List">
-    <!--@mbg.generated generated on Thu Aug 08 19:46:13 CST 2019.-->
-    id, username, "password", phone, email, created, updated
+    <!--@mbg.generated generated on Fri Aug 23 17:16:00 CST 2019.-->
+    id, employee_id, nickname, username, "password", phone, email, created, lastlogined,
+    updated, "count", "status", isdeleted
   </sql>
+    <insert id="insertUserRole">
+    insert into tb_user_role(user_id, role_id, created) values (#{userId} ,#{roleId},#{created} )
+  </insert>
+    <insert id="insertSelective">
+        <selectKey keyProperty="id" order="AFTER" resultType="long">
+            SELECT currval('tb_user_id_seq'::regclass) AS id
+        </selectKey>
+        insert into tb_user( employee_id, nickname, username, password, phone, email, created, "count",status)
+        values (#{employeeId} ,#{nickname} ,#{username} ,#{password} ,#{phone} ,#{email} ,#{created} ,#{count} ,#{status} )
+    </insert>
+    <delete id="deleteUserRoleByUserId">
+      delete  from  tb_user_role where user_id=#{userId}
+    </delete>
+  <select id="selectAllUserByRoleId" resultMap="BaseResultMap">
+    select * from tb_user where id in (select user_id from tb_user_role where role_id=#{roleId} )
+  </select>
+
+  <select id="selectByPage" resultMap="ResultMap">
+    select u.* from
+    tb_user u
+    where 1=1
+    <if test="nickname!=null">
+      and nickname like CONCAT('%', #{nickname}, '%')
+    </if>
+    <if test="username!=null">
+      and username like CONCAT('%', #{username},'%')
+    </if>
+    <if test="status!=null">
+      and status = #{status}
+    </if>
+    order by created desc
+  </select>
+  <select id="selectPageByRole" resultMap="RoleUserResultMap">
+      select u.*,ur.id as user_role_id from tb_user u
+      join tb_user_role ur on u.id=ur.user_id
+      where ur.role_id=#{roleid}
+  </select>
 </mapper>

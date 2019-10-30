@@ -1,16 +1,31 @@
 package com.zegobird.oauth2center.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
 import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @Table(name = "tb_user")
-public class TbUser implements Serializable {
+public class TbUser extends BaseEntity {
+    private static final long serialVersionUID = 828977041573535L;
     @Id
     @Column(name = "id")
     private Long id;
+
+    /**
+     * 所属员工id
+     */
+    @Column(name = "employee_id")
+    private Long employeeId;
+
+    /**
+     * 用户昵称
+     */
+    @Column(name = "nickname")
+    private String nickname;
 
     /**
      * 用户名
@@ -39,8 +54,27 @@ public class TbUser implements Serializable {
     @Column(name = "created")
     private Date created;
 
+    @Column(name = "lastlogined")
+    private Date lastlogined;
+
     @Column(name = "updated")
     private Date updated;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 登录次数
+     */
+    @Column(name = "\"count\"")
+    private Long count;
+
+    /**
+     * 状态 0正常 1禁用
+     */
+    @Column(name = "\"status\"")
+    private Short status;
+
+    /**
+     * 是否删除 0正常 1 删除
+     */
+    @Column(name = "isdeleted")
+    private Short isdeleted;
 }

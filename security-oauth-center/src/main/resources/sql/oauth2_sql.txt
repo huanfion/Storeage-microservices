@@ -12,6 +12,8 @@ create table oauth_client_details (
   additional_information VARCHAR(4096),
   autoapprove VARCHAR(256)
 );
+INSERT INTO "public"."oauth_client_details"("client_id", "resource_ids", "client_secret", "scope", "authorized_grant_types", "web_server_redirect_uri", "authorities", "access_token_validity", "refresh_token_validity", "additional_information", "autoapprove") VALUES ('clientid', 'test_resource_id', '$2a$10$Hf4DeNPAdcLSrGE.PZ5aK.e5qbWS1t2CyuC45DwiXOV1tBOKIGQL6', 'user_info', 'authorization_code,refresh_token,password,client_credentials', 'http://localhost:7007/user/login', NULL, 3600, 7200, NULL, '');
+INSERT INTO "public"."oauth_client_details"("client_id", "resource_ids", "client_secret", "scope", "authorized_grant_types", "web_server_redirect_uri", "authorities", "access_token_validity", "refresh_token_validity", "additional_information", "autoapprove") VALUES ('client1', 'test_resource_id', '$2a$10$Hf4DeNPAdcLSrGE.PZ5aK.e5qbWS1t2CyuC45DwiXOV1tBOKIGQL6', 'user_info', 'authorization_code,refresh_token,password,client_credentials', 'http://localhost:7008/user/login', NULL, 3600, 7200, NULL, '');
 
 create table oauth_client_token (
   token_id VARCHAR(256),

@@ -1,13 +1,16 @@
 package com.zegobird.oauth2center.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
 import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @Table(name = "tb_role")
-public class TbRole implements Serializable {
+public class TbRole extends BaseEntity {
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "id")
     private Long id;
@@ -42,5 +45,15 @@ public class TbRole implements Serializable {
     @Column(name = "updated")
     private Date updated;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 状态 0正常 1禁用
+     */
+    @Column(name = "\"status\"")
+    private Short status;
+
+    /**
+     * 是否删除 0正常 1 删除
+     */
+    @Column(name = "isdeleted")
+    private Short isdeleted;
 }

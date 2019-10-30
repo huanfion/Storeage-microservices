@@ -3,9 +3,9 @@ package com.zegobird.oauth2center.config;
 import com.zegobird.oauth2center.redis.ZBRedisTokenStore;
 import com.zegobird.oauth2center.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -37,6 +37,7 @@ public class ZBAuthorizationServerConfig extends AuthorizationServerConfigurerAd
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @RefreshScope
     @Bean
     @Primary //spring boot 默认有个配置，使用了@Bean，又配置了，所以这里要使用Primary 指定这个是主配置。
     @ConfigurationProperties(prefix = "spring.datasource")//指定数据源，否则会有冲突
@@ -82,8 +83,8 @@ public class ZBAuthorizationServerConfig extends AuthorizationServerConfigurerAd
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.tokenKeyAccess("permitAll()");//开启/oauth/token_key 验证端口无权限访问
-        security.checkTokenAccess("isAuthenticated()");
-        security.allowFormAuthenticationForClients();//允许表单登录
+        security.checkTokenAccess("isAuthenticated()");//开启token验证端口
+        security.allowFormAuthenticationForClients();
     }
 
     @Override

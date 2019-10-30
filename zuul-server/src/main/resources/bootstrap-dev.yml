@@ -1,7 +1,87 @@
+server:
+  port: 8886
 spring:
-  cloud:
-    config:
-      uri: http://localhost:8888
-      name: zuulserver
-      label: master
-      profile: dev
+  application:
+    name: storage-apigateway
+  rabbitmq:
+    host: 192.168.50.49
+    port: 5672
+    username: guest
+    password: guest
+    cloud:
+      bus:
+        enabled: true
+      trace:
+        enabled: true # 开启消息跟踪
+    # 配置数据库信息
+  datasource:
+    # 数据源配置
+    username: postgres
+    password: admin-123456
+    url: jdbc:postgresql://192.168.50.54:5432/zegobirdWMS_Basis?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    driver-class-name: org.postgresql.Driver
+    # 初始化 最小 最大
+    initial-size: 5
+    min-idle: 5
+    max-active: 20
+    # 配置获取连接等待超时的时间
+    max-wait: 60000
+zuul:
+  routes:
+    oauth2-server:
+      path: /zegooauth/**
+      serviceId: oauth2-server
+      sensitiveHeaders: "*"
+    storage-baseinfo:
+      path: /baseinfo/**
+      serviceId: storage-baseinfo
+      sensitiveHeaders: "*"
+    storage-product:
+      path: /product/**
+      serviceId: storage-product
+      sensitiveHeaders: "*"
+  retryable: true
+  ignored-services: "*"
+  ribbon:
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 0
+    eager-load:
+      enabled: true
+security:
+  oauth2:
+    client:
+      access-token-uri: http://192.168.50.190:8886/zegooauth/oauth/token
+      user-authorization-uri: http://192.168.50.190:8886/zegooauth/oauth/authorize
+      client-id: clientid
+    resource:
+      user-info-uri:  http://192.168.50.190:8886/zegooauth/api/member
+      prefer-token-info: false
+management:
+  endpoint:
+    web:
+      exposure:
+        include: "*"
+ribbon:
+  eureka:
+    enabled: true
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${eureka.instance.ip-address}:${server.port}
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.50.190:8080/eureka/
+#熔断和降级
+#hystrix:
+#  threadpool:
+#    default:
+#      coreSize: 50
+#      maximumSize: 10000
+#      allowMaximumSizeToDivergeFromCoreSize: true
+#      maxQueueSize: -1
+#      execution:
+#        timeout:
+#          enabled: true
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 30000

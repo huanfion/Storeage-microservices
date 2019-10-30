@@ -1,15 +1,20 @@
 package com.zegobird.oauth2center.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
 import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @Table(name = "tb_permission")
-public class TbPermission implements Serializable {
+public class TbPermission extends BaseEntity {
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "id")
+    @GeneratedValue(generator = "JDBC")
     private Long id;
 
     /**
@@ -27,14 +32,14 @@ public class TbPermission implements Serializable {
     /**
      * 权限英文名称
      */
-    @Column(name = "enname")
-    private String enname;
+    @Column(name = "code")
+    private String code;
 
     /**
-     * 授权路径
+     * 权限类型 0一级菜单 1子菜单 2按钮 3其他
      */
-    @Column(name = "url")
-    private String url;
+    @Column(name = "type")
+    private String type;
 
     /**
      * 备注
@@ -48,5 +53,21 @@ public class TbPermission implements Serializable {
     @Column(name = "updated")
     private Date updated;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 状态 0正常 1禁用
+     */
+    @Column(name = "\"status\"")
+    private Short status;
+
+    /**
+     * 是否删除 0正常 1 删除
+     */
+    @Column(name = "isdeleted")
+    private Short isdeleted;
+
+    /**
+     * 权限资源id，权限类型是菜单时，对应的就是菜单id
+     */
+    @Column(name = "resourceid")
+    private Long resourceid;
 }

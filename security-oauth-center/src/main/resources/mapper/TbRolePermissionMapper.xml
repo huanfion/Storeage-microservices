@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zegobird.oauth2center.mapper.TbRolePermissionMapper">
-  <resultMap id="BaseResultMap" type="com.zegobird.oauth2center.domain.TbRolePermission">
-    <!--@mbg.generated generated on Thu Aug 08 19:46:13 CST 2019.-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="role_id" jdbcType="BIGINT" property="roleId" />
-    <result column="permission_id" jdbcType="BIGINT" property="permissionId" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated generated on Thu Aug 08 19:46:13 CST 2019.-->
-    id, role_id, permission_id
-  </sql>
+    <resultMap id="BaseResultMap" type="com.zegobird.oauth2center.domain.TbRolePermission">
+        <!--@mbg.generated generated on Tue Aug 20 14:59:43 CST 2019.-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="permission_id" jdbcType="BIGINT" property="permissionId"/>
+    </resultMap>
+    <resultMap id="RoleResultMap" type="java.util.HashMap">
+        <result column="roleid" jdbcType="BIGINT" property="roleid" />
+        <result column="rolename" jdbcType="VARCHAR" property="rolename" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated generated on Tue Aug 20 14:59:43 CST 2019.-->
+        id, role_id, permission_id
+    </sql>
+    <insert id="insertPermissionRole">
+    insert  into tb_role_permission(permission_id,role_id) values (#{permissionId},#{roleId})
+  </insert>
+    <insert id="insertForeach" parameterType="java.util.List">
+        insert into tb_role_permission(role_id, permission_id) VALUES 
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.roleId} ,#{item.permissionId} )
+        </foreach>
+    </insert>
+    <delete id="deletePermissionRoleByPermissionId">
+      delete  from  tb_role_permission where permission_id=#{permissionId}
+    </delete>
+    <select id="queryPermissionRole" resultMap="RoleResultMap">
+		select tr.id as roleid,tr.name as rolename
+		from tb_role tr join tb_role_permission rp on rp.role_id = tr.id
+		where rp.permission_id = #{permissionid}
+  </select>
+    <delete id="deleteFunctionsByRole">
+      delete  from  tb_role_permission where role_id = #{roleId} and permission_id in(select id from tb_permission where type='2')
+    </delete>
 </mapper>

@@ -14,4 +14,4 @@ server:
     session:
       cookie:
         name: OAUTH2SESSION
-  port: 7008
+  port: 7007

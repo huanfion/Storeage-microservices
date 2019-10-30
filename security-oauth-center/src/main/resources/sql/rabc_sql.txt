@@ -7,8 +7,11 @@ drop table if exists tb_group;
 drop table if exists tb_group_role;
 drop table if exists tb_user_permission;
 drop table if exists tb_group_permission;
+drop table if exists tb_user_group;
 drop table if exists tb_organization;
-
+drop table if exists tb_menu_permission;
+drop table if exists tb_employee;
+drop table if exists tb_menu;
 -- 用户表
 CREATE TABLE tb_user (
   id serial8 NOT NULL ,
@@ -42,12 +45,12 @@ select * from tb_user;
 --角色表
 CREATE TABLE tb_role (
   id serial8 NOT NULL ,
-  parent_id bigint DEFAULT NULL ,
+  parent_id bigint ,
   name varchar(64) NOT NULL ,
   enname varchar(64) NOT NULL ,
   description varchar(200) DEFAULT NULL ,
   created TIMESTAMP NOT NULL,
-  updated TIMESTAMP NOT NULL,
+  updated TIMESTAMP ,
   PRIMARY KEY (id)
 ) ;
 comment on COLUMN tb_role.parent_id is '父角色';
@@ -108,6 +111,19 @@ comment on COLUMN tb_group.parent_id is '父组';
 comment on COLUMN tb_group.groupname is '组名';
 comment on table tb_group is '用户组表';
 
+--用户和用户组关联表
+CREATE TABLE "tb_user_group" (
+  "id" serial8 NOT NULL,
+  "user_id" int8 NOT NULL,
+  "group_id" int8 NOT NULL,
+  "created" timestamp(6) NOT NULL,
+  "updated" timestamp(6)
+)
+;
+COMMENT ON COLUMN "tb_user_group"."user_id" IS '用户 ID';
+COMMENT ON COLUMN "tb_user_group"."group_id" IS '用户组 ID';
+COMMENT ON TABLE  "tb_user_group" IS '用户和用户组关联表';
+
 
 
 --角色权限表
@@ -135,7 +151,7 @@ insert  into tb_role_permission(role_id,permission_id) values
 (1,11);
 
 
---组权限表
+--组权限关联表
 create table tb_group_permission(
 id serial8 not null,
 group_id bigint not null,
@@ -145,20 +161,20 @@ PRIMARY KEY (id)
 );
 comment on COLUMN tb_group_permission.group_id is '用户组id';
 comment on column tb_group_permission.permission_id is '权限id';
-comment on table tb_group_permission is '组权限表';
+comment on table tb_group_permission is '组权限关联表';
 
 select * from tb_group_permission;
 
---组角色表
+--组角色关联表
 create table tb_group_role(
 id serial8 not null,
 group_id bigint not null,
 role_id bigint not null,
-PRIMARY KEY (id,role_id)
+PRIMARY KEY (id)
 );
 comment on COLUMN tb_group_role.group_id is '用户组id';
 comment on column tb_group_role.role_id is '角色id';
-comment on table tb_group_role is '组角色表';
+comment on table tb_group_role is '组角色关联表';
 select * from tb_group_role;
 
 --用户权限表
@@ -206,14 +222,73 @@ comment on COLUMN tb_organization.organization_name is '组织名称';
 comment on COLUMN tb_organization.description is '组织描述';
 comment on table tb_organization is '组织表';
 
+--员工表
+create table tb_employee
+(
+   id                   serial8                        not null,
+   user_id              integer                        not null,
+   organizationid       integer                        not null,
+   name                 varchar(50)                    null,
+   email                varchar(50)                    null,
+   gender               char(1)                        null,
+   age                  integer                        null,
+   create_uid           integer                        null,
+   create_time          timestamp                      null,
+   update_uid           integer                        null,
+   update_time          timestamp                      null,
+   constraint tb_employee_pkey primary key (id)
+);
+
+comment on table  tb_employee is '员工表';
+comment on column tb_employee.user_id is '所属用户id';
+comment on column tb_employee.organizationid is '组织id';
+comment on column tb_employee.name is '员工';
+comment on column tb_employee.email is '员工邮箱';
+comment on column tb_employee.gender is '员工性别';
+comment on column tb_employee.age is '员工年龄';
+
+--菜单表
+create table tb_menu
+(
+   id                   serial8                        not null,
+   parent_id            integer                        not null,
+   name                 varchar(50)                    not null,
+   route                varchar(50)                    null,
+   displayname          varchar(50)                    null,
+   discription          varchar(250)                   null,
+   icon                 varchar(50)                    null,
+   created              timestamp                      not null,
+   updated              timestamp                      null,
+   create_uid           integer                        null,
+   update_uid           integer                        null,
+   constraint PK_TB_MENU primary key (id)
+);
+comment on column tb_menu.parent_id is '父菜单id';
+comment on column tb_menu."name" is '菜单名称';
+comment on column tb_menu.displayname is '菜单展示名称';
+comment on column tb_menu.discription is '菜单描述';
+comment on column tb_menu.icon is '图标';
+comment on table tb_menu is '菜单表';
+
+--菜单权限关联表
+create table tb_menu_permission
+(
+   id                   serial8                        not null,
+   menu_id              integer                        null,
+   permission_id        integer                        null,
+   constraint PK_TB_MENU_PERMISSION primary key (id)
+);
+comment on column tb_menu_permission.menu_id is '菜单id';
+comment on column tb_menu_permission.permission_id is '权限id';
+comment on table tb_menu_permission is '菜单权限关联表';
 
 
-  SELECT P.*
-        FROM
-            tb_user AS u
-            LEFT JOIN tb_user_role AS ur ON u."id" = ur.user_id
-            LEFT JOIN tb_role AS r ON r."id" = ur.role_id
-            LEFT JOIN tb_role_permission AS rp ON r."id" = rp.role_id
-            LEFT JOIN tb_permission AS P ON P.ID = rp.permission_id
-        WHERE
-            u.ID = 1
+--   SELECT P.*
+--         FROM
+--             tb_user AS u
+--             LEFT JOIN tb_user_role AS ur ON u."id" = ur.user_id
+--             LEFT JOIN tb_role AS r ON r."id" = ur.role_id
+--             LEFT JOIN tb_role_permission AS rp ON r."id" = rp.role_id
+--             LEFT JOIN tb_permission AS P ON P.ID = rp.permission_id
+--         WHERE
+--             u.ID = 1

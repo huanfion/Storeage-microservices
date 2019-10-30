@@ -41,7 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<GrantedAuthority> grantedAuthorities = Lists.newArrayList();
 
         tbPermissions.forEach(tbPermission -> {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(tbPermission.getEnname());
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(tbPermission.getName());
             grantedAuthorities.add(grantedAuthority);
         });
         // 标识位设置

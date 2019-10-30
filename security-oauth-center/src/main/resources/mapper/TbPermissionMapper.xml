@@ -2,29 +2,76 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zegobird.oauth2center.mapper.TbPermissionMapper">
   <resultMap id="BaseResultMap" type="com.zegobird.oauth2center.domain.TbPermission">
-    <!--@mbg.generated generated on Thu Aug 08 19:47:31 CST 2019.-->
+    <!--@mbg.generated generated on Sat Aug 24 16:37:47 CST 2019.-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="parent_id" jdbcType="BIGINT" property="parentId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="enname" jdbcType="VARCHAR" property="enname" />
-    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+      <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="created" jdbcType="TIMESTAMP" property="created" />
     <result column="updated" jdbcType="TIMESTAMP" property="updated" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="isdeleted" jdbcType="SMALLINT" property="isdeleted" />
+    <result column="resourceid" jdbcType="BIGINT" property="resourceid" />
   </resultMap>
+    <resultMap id="FunctionResultMap" type="com.zegobird.oauth2center.dto.FunctionPermission">
+        <!--@mbg.generated generated on Sat Aug 24 16:37:47 CST 2019.-->
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="code" jdbcType="VARCHAR" property="code" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="created" jdbcType="TIMESTAMP" property="created" />
+        <result column="updated" jdbcType="TIMESTAMP" property="updated" />
+        <result column="status" jdbcType="SMALLINT" property="status" />
+        <result column="isdeleted" jdbcType="SMALLINT" property="isdeleted" />
+        <result column="resourceid" jdbcType="BIGINT" property="resourceid" />
+        <result column="route" jdbcType="VARCHAR" property="route" />
+    </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated generated on Thu Aug 08 19:47:31 CST 2019.-->
-    id, parent_id, "name", enname, url, description, created, updated
+    <!--@mbg.generated generated on Sat Aug 24 16:37:47 CST 2019.-->
+    id, parent_id, "name", code, "type", description, created, updated, "status",
+    isdeleted, resourceid
   </sql>
-  <select id="selectByUserId" resultMap="BaseResultMap">
+    <select id="selectByUserId" resultMap="BaseResultMap">
         SELECT P.*
         FROM
             tb_user AS u
-            LEFT JOIN tb_user_role AS ur ON u."id" = ur.user_id
-            LEFT JOIN tb_role AS r ON r."id" = ur.role_id
-            LEFT JOIN tb_role_permission AS rp ON r."id" = rp.role_id
-            LEFT JOIN tb_permission AS P ON P.ID = rp.permission_id
+             JOIN tb_user_role AS ur ON u."id" = ur.user_id
+             JOIN tb_role AS r ON r."id" = ur.role_id
+             JOIN tb_role_permission AS rp ON r."id" = rp.role_id
+             JOIN tb_permission AS P ON P.ID = rp.permission_id
         WHERE
             u.ID = ${userId}
-  </select>
+    </select>
+    <select id="selectByMenuId" resultMap="BaseResultMap">
+        select * from tb_permission where type='1' and resourceid= #{menuid}
+    </select>
+    <insert id="insert">
+        <selectKey keyProperty="id" order="AFTER" resultType="long">
+            SELECT currval('tb_permission_id_seq'::regclass) AS id
+        </selectKey>
+        insert  into tb_permission( parent_id, name, code, type, description, created,  status, isdeleted, resourceid)
+        values (#{parentId} ,#{name},#{code},#{type}, #{description} ,#{created} ,#{status},#{isdeleted} ,#{resourceid} )
+    </insert>
+
+    <select id="getFunctionList" resultMap="FunctionResultMap">
+       SELECT p.*,m.route FROM tb_permission p left join tb_menu m on p.resourceid=m.id where type='2'
+    </select>
+
+    <select id="getAllFunctionsByRole" resultMap="FunctionResultMap">
+       SELECT p.*,m.route FROM tb_permission p
+       join tb_menu m on p.resourceid=m.id
+       where type='2' and p.resourceid in (select m1.id from tb_menu m1 join tb_permission p1 on m1.id=p1.resourceid
+	   join tb_role_permission rp on rp.permission_id=p1.id where type='1' and rp.role_id=#{roleId})
+    </select>
+
+    <select id="getRoleFunctions" resultMap="FunctionResultMap">
+       SELECT p.*,m.route FROM tb_permission p
+       left join tb_menu m on p.resourceid = m.id
+       left join tb_role_permission rp on p.id=rp.permission_id
+       where p.type='2' and rp.role_id= #{roleId}
+    </select>
 </mapper>

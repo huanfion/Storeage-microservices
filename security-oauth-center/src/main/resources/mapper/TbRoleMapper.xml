@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zegobird.oauth2center.mapper.TbRoleMapper">
   <resultMap id="BaseResultMap" type="com.zegobird.oauth2center.domain.TbRole">
-    <!--@mbg.generated generated on Thu Aug 08 19:46:13 CST 2019.-->
+    <!--@mbg.generated generated on Fri Aug 23 14:19:50 CST 2019.-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="parent_id" jdbcType="BIGINT" property="parentId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -10,9 +10,19 @@
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="created" jdbcType="TIMESTAMP" property="created" />
     <result column="updated" jdbcType="TIMESTAMP" property="updated" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="isdeleted" jdbcType="SMALLINT" property="isdeleted" />
   </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated generated on Thu Aug 08 19:46:13 CST 2019.-->
-    id, parent_id, "name", enname, description, created, updated
+    <!--@mbg.generated generated on Fri Aug 23 14:19:50 CST 2019.-->
+    id, parent_id, "name", enname, description, created, updated, "status", isdeleted
   </sql>
+    <insert id="insert">
+      <selectKey keyProperty="id" order="AFTER" resultType="long">
+        SELECT currval('tb_role_id_seq'::regclass) AS id
+      </selectKey>
+       insert into tb_role(parent_id, name, enname, description, created,status,isdeleted) VALUES (
+       #{parentId} ,#{name} ,#{enname} ,#{description} ,#{created},#{status},#{isdeleted}
+      )
+    </insert>
 </mapper>

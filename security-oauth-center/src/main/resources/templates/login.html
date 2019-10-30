@@ -4,8 +4,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<meta http-equiv="content-type" content="text/html;charset=utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="_csrf" content="${_csrf.token}"/>
-	<meta name="_csrf_header" content="${_csrf.headerName}"/>
+	<!--<meta name="_csrf" content="${_csrf.token}"/>-->
+	<!--<meta name="_csrf_header" content="${_csrf.headerName}"/>-->
 	<title>login</title>
 
 	<!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
@@ -35,8 +35,6 @@
 
 <script type="text/javascript">
 	$(function(){
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
 		Victor("container", "output");   //登录背景函数
 		$("#entry_name").focus();
 		$(document).keydown(function(event){
